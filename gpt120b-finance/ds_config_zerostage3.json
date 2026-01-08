@@ -1,0 +1,17 @@
+
+{
+  "zero_optimization": {
+    "stage": 3,
+    "overlap_comm": true,
+    "contiguous_gradients": true,
+    "reduce_bucket_size": 50000000,
+    "stage3_prefetch_bucket_size": 50000000,
+    "stage3_param_persistence_threshold": 1000000,
+    "cpu_offload": false
+  },
+  "bf16": {"enabled": true},
+  "gradient_accumulation_steps": 64,
+  "train_micro_batch_size_per_gpu": 1,
+  "gradient_clipping": 1.0,
+  "aio": {"block_size": 1048576, "queue_depth": 16}
+}
