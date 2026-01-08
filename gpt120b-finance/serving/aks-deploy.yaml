@@ -1,0 +1,55 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpt120b-serve
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gpt120b-serve
+  template:
+    metadata:
+      labels:
+        app: gpt120b-serve
+    spec:
+      nodeSelector:
+        kubernetes.io/role: gpu
+      containers:
+      - name: vllm
+        image: ghcr.io/your-org/vllm-adapter:latest
+        args:
+          - "--model"
+          - "<repo-or-registry-path>"
+          - "--tensor-parallel-size=8"
+          - "--max-num-seqs=16"
+          - "--adapter-path=/models/peft-adapter"
+        env:
+          - name: NCCL_TOPO_FILE
+            value: "/etc/nccl/topo.xml"
+        resources:
+          limits:
+            nvidia.com/gpu: 8
+            memory: "120Gi"
+            cpu: "16"
+        volumeMounts:
+          - name: adapters
+            mountPath: /models/peft-adapter
+      volumes:
+        - name: adapters
+          persistentVolumeClaim:
+            claimName: adapter-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gpt120b-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: gpt120b-serve
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+``
