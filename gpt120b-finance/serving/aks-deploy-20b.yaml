@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpt20b-serve
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gpt20b-serve
+  template:
+    metadata:
+      labels:
+        app: gpt20b-serve
+    spec:
+      nodeSelector:
+        kubernetes.io/role: gpu
+      containers:
+      - name: vllm
+        image: ghcr.io/your-org/vllm-adapter:latest
+        args:
+          - "--model"
+          - "<repo-or-registry-path-20b>"
+          - "--tensor-parallel-size=2"
+          - "--max-num-seqs=32"
+          - "--adapter-path=/models/peft-adapter-20b"
+        env:
+          - name: NCCL_TOPO_FILE
+            value: "/etc/nccl/topo.xml"
+        resources:
+          limits:
+            nvidia.com/gpu: 2
+            memory: "48Gi"
+            cpu: "8"
+        volumeMounts:
+          - name: adapters
+            mountPath: /models/peft-adapter-20b
+      volumes:
+        - name: adapters
+          persistentVolumeClaim:
+            claimName: adapter-pvc-20b
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gpt20b-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: gpt20b-serve

@@ -1,0 +1,33 @@
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Data - large files (download via prepare_all_datasets.py)
+training.jsonl
+gpt120b-finance/data/raw/
+gpt120b-finance/data/fraudTrain.csv
+gpt120b-finance/data/fraudTest.csv
+gpt120b-finance/data/fraudTrain_fixed.csv
+gpt120b-finance/data/fraudTest_fixed.csv
+gpt120b-finance/data/training.jsonl
+gpt120b-finance/data/validation.jsonl
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Outputs
+outputs/
+outputs-20b/
+*.pt
+*.bin
+*.safetensors

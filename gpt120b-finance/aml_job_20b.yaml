@@ -1,0 +1,26 @@
+name: gpt_oss_20b_finance_lora
+experiment_name: paypal_finance_ft_20b
+code: .
+command: >
+  deepspeed --num_nodes ${NUM_NODES} --num_gpus ${NUM_GPUS} \
+  train_20b_peft.py \
+    --model_id ${MODEL_ID} \
+    --train_jsonl ${{inputs.train}} \
+    --val_jsonl   ${{inputs.val}} \
+    --seq_len 4096 --epochs 3 \
+    --lora_r 16 --lora_alpha 32 --lora_dropout 0.05 \
+    --learning_rate 2e-4 --grad_accum_steps 16 \
+    --deepspeed ds_config_zerostage2.json
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.8-cudnn8
+  conda_file: environment.yml
+compute: ndv4-cluster
+inputs:
+  train:
+    type: uri_file
+    path: azureml://datastores/workspaceblobstore/paths/data/training.jsonl
+  val:
+    type: uri_file
+    path: azureml://datastores/workspaceblobstore/paths/data/validation.jsonl
+resources:
+  instance_count: 2
