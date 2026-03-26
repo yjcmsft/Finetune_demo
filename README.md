@@ -18,9 +18,9 @@ All datasets are converted into a unified JSONL format (`{"prompt": "...", "comp
 
 ```
 Finetune_demo/
+├── .gitignore
 ├── LICENSE
 ├── README.md
-├── training.jsonl
 └── gpt120b-finance/
     ├── environment.yml                  # Conda env (PyTorch, Transformers, PEFT, DeepSpeed)
     ├── train_120b_peft.py               # LoRA fine-tuning script for 120B model
